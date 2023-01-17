@@ -8,7 +8,7 @@ namespace FoodieTests
 {
     public class TestDataProvider
     {
-        public static IEnumerable<RecipeItem> GetRecipeItemsForSpicyFish()
+        public static IEnumerable<RecipeItem> GetRecipeItemsForFirstSpicyFish()
         {
             return new List<RecipeItem>()
             {
@@ -35,17 +35,13 @@ namespace FoodieTests
             };
         }
 
-        
-
-        //public static IEnumerable<Recipe> GetAllRecipes()
-        //{
-
-        //    return new List<Recipe>()
-        //    {
-        //         new Recipe() { Id = 1, Name = "Spicy Fish", RecipeItems = GetRecipeItemsForSpicyFish() },
-        //         new Recipe() { Id = 2, Name = "Sweet Ribs", RecipeItems = GetRecipeItemsForSpicyRibs()},
-        //         new Recipe() { Id = 3, Name = "Spicy Pork", RecipeItems = GetecipeItemsForSpicyPork() }
-        //    };
-        //}
+        public static IEnumerable<RecipeItem> GetRecipeItemsForSecondSpicyFish()
+        {
+            return new List<RecipeItem>()
+            {
+                new RecipeItem() {Id = 7, Name = "Fish", Amount = "100g", RecipeId = 1},
+                new RecipeItem() {Id = 8, Name = "Spicy", Amount = "200g", RecipeId = 1}
+            };
+        }
     }
 }

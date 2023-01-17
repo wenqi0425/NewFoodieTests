@@ -27,13 +27,13 @@ namespace NewFoodie.Areas.Identity.Pages.Account.Manage.Tests
         {
              RecipesByIngredientSpicy = new List<Recipe>()
             {
-                new Recipe() { Id = 1, Name = "Spicy Fish", RecipeItems = TestDataProvider.GetRecipeItemsForSpicyFish().ToList() },
+                new Recipe() { Id = 1, Name = "Spicy Fish", RecipeItems = TestDataProvider.GetRecipeItemsForFirstSpicyFish().ToList() },
                 new Recipe() { Id = 3, Name = "Spicy Pork", RecipeItems = TestDataProvider.GetecipeItemsForSpicyPork().ToList() }
             };
 
             RecipesByRecipeSpicyFish = new List<Recipe>()
             {
-                new Recipe() { Id = 1, Name = "Spicy Fish", RecipeItems = TestDataProvider.GetRecipeItemsForSpicyFish().ToList() },
+                new Recipe() { Id = 1, Name = "Spicy Fish", RecipeItems = TestDataProvider.GetRecipeItemsForFirstSpicyFish().ToList() },
             };
 
             NoRecipesFound = new List<Recipe>() { };

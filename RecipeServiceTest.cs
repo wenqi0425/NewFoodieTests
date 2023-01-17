@@ -4,26 +4,23 @@ using System.Collections.Generic;
 using System.Linq;
 using NewFoodie.Models;
 using Moq;
-
 using NewFoodie.Services.EFServices;
 using FoodieTests;
 using Microsoft.EntityFrameworkCore;
+using Sentry.Protocol;
 
 namespace NewFoodie.Areas.Identity.Pages.Account.Manage.Tests
 {
     [TestClass()]
     public class RecipeServiceTest
     {
-        private static DbContextOptions<AppDbContext> dbContextOptions = new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase("rececipMemoeryDb").Options;
-        private AppDbContext dbContext;
+        private static DbContextOptions<AppDbContext> _dbContextOptions = new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase("rececipMemoeryDb").Options;
+        private AppDbContext _dbContext;
         private EFRecipeService _recipeService;
 
-        private List<Recipe> OriginalAllRecipes;
+        private List<Recipe> _originalAllRecipes;
 
-        //private List<Recipe> RecipesAddSweetRibs;
-        //private List<Recipe> RecipesDeleteSpicyFish;
-        //private List<Recipe> NoRecipesFound;
-        private Recipe RecipeSweetRib;
+        private Recipe _recipeSweetRib;
 
         public RecipeServiceTest()
         {
@@ -33,33 +30,21 @@ namespace NewFoodie.Areas.Identity.Pages.Account.Manage.Tests
         [TestInitialize()]
         public void Setup()
         {
-            dbContext = new AppDbContext(dbContextOptions);
-            dbContext.Database.EnsureCreated();
+            _dbContext = new AppDbContext(_dbContextOptions);
+            _dbContext.Database.EnsureCreated();
 
-            //_mockDbContext = new Mock<AppDbContext>();
-            _recipeService = new EFRecipeService(dbContext);
+            _recipeService = new EFRecipeService(_dbContext);
 
-            OriginalAllRecipes = new List<Recipe>()
+            _originalAllRecipes = new List<Recipe>()
             {
-                new Recipe() { Id = 1, Name = "Spicy Fish", RecipeItems = TestDataProvider.GetRecipeItemsForSpicyFish().ToList() },
-                new Recipe() { Id = 2, Name = "Spicy Pork", RecipeItems = TestDataProvider.GetecipeItemsForSpicyPork().ToList() }
+                new Recipe() { Id = 1, Name = "Spicy Fish", RecipeItems = TestDataProvider.GetRecipeItemsForFirstSpicyFish().ToList() },
+                new Recipe() { Id = 2, Name = "Spicy Pork", RecipeItems = TestDataProvider.GetecipeItemsForSpicyPork().ToList() },
+                new Recipe() { Id = 3, Name = "Spicy Fish", RecipeItems = TestDataProvider.GetRecipeItemsForSecondSpicyFish().ToList() },
             };
 
-            //RecipesAddSweetRibs = new List<Recipe>()
-            //{
-            //    new Recipe() { Id = 1, Name = "Spicy Fish", RecipeItems = TestDataProvider.GetRecipeItemsForSpicyFish().ToList() },
-            //    new Recipe() { Id = 2, Name = "Spicy Pork", RecipeItems = TestDataProvider.GetecipeItemsForSpicyPork().ToList() },
-            //    new Recipe() { Id = 3, Name = "Sweet Ribs", RecipeItems = TestDataProvider.GetRecipeItemsForSweetRibs().ToList() }
-            //};
-
-            //RecipesDeleteSpicyFish = new List<Recipe>()
-            //{
-            //    new Recipe() { Id = 2, Name = "Spicy Pork", RecipeItems = TestDataProvider.GetecipeItemsForSpicyPork().ToList() }
-            //};
-
-            RecipeSweetRib = new Recipe()
+            _recipeSweetRib = new Recipe()
             {
-                Id = 3,
+                Id = 4,
                 Name = "Sweet Ribs",
                 RecipeItems = TestDataProvider.GetRecipeItemsForSweetRibs()
             };
@@ -67,20 +52,20 @@ namespace NewFoodie.Areas.Identity.Pages.Account.Manage.Tests
 
         [TestCleanup]
         public void CleanUp() { 
-            dbContext.Database.EnsureDeleted();
-            dbContext.Dispose();
+            _dbContext.Database.EnsureDeleted();
+            _dbContext.Dispose();
         }
 
         [TestMethod()]
         public void AddRecipeTest()
         {
             //Arrange
-            var expected = RecipeSweetRib;
+            var expected = _recipeSweetRib;
 
             //Act
             _recipeService.AddRecipe(expected);
 
-            var found = dbContext.Recipes.Find(expected.Id);
+            var found = _dbContext.Recipes.Find(expected.Id);
 
             //Assert
             Assert.AreEqual(found.Name, expected.Name);
@@ -90,22 +75,16 @@ namespace NewFoodie.Areas.Identity.Pages.Account.Manage.Tests
         [TestMethod()]
         public void GetAllRecipesTest()
         {
-            //Arrange
-            var searchCriteria = new RecipeCriteria
-            {
-                SearchCategory = "Ingredient",
-                SearchCriterion = "No this Ingredient"
-            };
-
-            dbContext.Recipes.AddRange(OriginalAllRecipes);
-            dbContext.SaveChanges();
+            // Arrange
+            _dbContext.Recipes.AddRange(_originalAllRecipes);
+            _dbContext.SaveChanges();
 
             //Act
             var found = _recipeService.GetAllRecipes();
             var countOfResults = found.Count();
 
             //Assert
-            Assert.IsTrue(countOfResults == OriginalAllRecipes.Count); ;
+            Assert.IsTrue(countOfResults == _originalAllRecipes.Count); ;
         }
 
 
@@ -113,12 +92,12 @@ namespace NewFoodie.Areas.Identity.Pages.Account.Manage.Tests
         public void DeleteRecipeTest()
         {
             //Arrange
-            dbContext.Add(RecipeSweetRib);
-            dbContext.SaveChanges();
+            _dbContext.Add(_recipeSweetRib);
+            _dbContext.SaveChanges();
 
             //Act
-            _recipeService.DeleteRecipe(RecipeSweetRib);
-            var found = dbContext.Recipes.Find(RecipeSweetRib.Id);
+            _recipeService.DeleteRecipe(_recipeSweetRib);
+            var found = _dbContext.Recipes.Find(_recipeSweetRib.Id);
 
             //Assert
             Assert.IsNull(found);
@@ -129,19 +108,57 @@ namespace NewFoodie.Areas.Identity.Pages.Account.Manage.Tests
         {
             //Arrange
             var expected = "modified introduction";
-            dbContext.Add(RecipeSweetRib);
-            dbContext.SaveChanges();
+            _dbContext.Add(_recipeSweetRib);
+            _dbContext.SaveChanges();
 
             //Act
-            var modifiedRecipe = RecipeSweetRib;
+            var modifiedRecipe = _recipeSweetRib;
             modifiedRecipe.Introduction = expected;
             _recipeService.EditRecipe(modifiedRecipe);
 
-            var found = dbContext.Recipes.Find(RecipeSweetRib.Id);
+            var found = _dbContext.Recipes.Find(_recipeSweetRib.Id);
 
             //Assert
             Assert.IsNotNull(found);
             Assert.AreEqual(expected, found.Introduction); ;
         }
+
+        [TestMethod()]
+        public void GetRecipeByIdTest()
+        {
+            //Arrange
+            _dbContext.Recipes.AddRange(_originalAllRecipes);
+            _dbContext.SaveChanges();
+
+            var recipeId = 1;
+            var expectedRecipeName = "Spicy Fish";
+
+            //Act
+            var found = _recipeService.GetRecipeById(recipeId);
+
+            //Assert
+            Assert.IsNotNull(found);
+            Assert.AreEqual(expectedRecipeName, found.Name); ;
+        }
+
+        [TestMethod()]
+        public void GetRecipeByNameTest()
+        {
+            //Arrange
+            _dbContext.Recipes.AddRange(_originalAllRecipes);
+            _dbContext.SaveChanges();
+
+            var recipeName = "Spicy Fish";
+            var expectedRecipeNumber = 2;
+
+            //Act
+            var found = _recipeService.GetRecipesByRecipeName(recipeName).ToList();
+
+
+            //Assert
+            Assert.IsNotNull(found);
+            Assert.AreEqual(expectedRecipeNumber, found.Count()); 
+        }
+
     }
 }
