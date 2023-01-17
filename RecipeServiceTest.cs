@@ -1,13 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using NewFoodie.Models;
-using Moq;
 using NewFoodie.Services.EFServices;
 using FoodieTests;
 using Microsoft.EntityFrameworkCore;
-using Sentry.Protocol;
 
 namespace NewFoodie.Areas.Identity.Pages.Account.Manage.Tests
 {
@@ -17,6 +14,7 @@ namespace NewFoodie.Areas.Identity.Pages.Account.Manage.Tests
         private static DbContextOptions<AppDbContext> _dbContextOptions = new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase("rececipMemoeryDb").Options;
         private AppDbContext _dbContext;
         private EFRecipeService _recipeService;
+        private EFRecipeItemService _recipeItemService;
 
         private List<Recipe> _originalAllRecipes;
 
@@ -159,6 +157,5 @@ namespace NewFoodie.Areas.Identity.Pages.Account.Manage.Tests
             Assert.IsNotNull(found);
             Assert.AreEqual(expectedRecipeNumber, found.Count()); 
         }
-
     }
 }
