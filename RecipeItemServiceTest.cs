@@ -13,7 +13,6 @@ namespace NewFoodie.Areas.Identity.Pages.Account.Manage.Tests
     {
         private static DbContextOptions<AppDbContext> _dbContextOptions = new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase("rececipMemoeryDb").Options;
         private AppDbContext _dbContext;
-        private EFRecipeService _recipeService;
         private EFRecipeItemService _recipeItemService;
 
         private Recipe _recipeSweetRib;
@@ -30,7 +29,6 @@ namespace NewFoodie.Areas.Identity.Pages.Account.Manage.Tests
             _dbContext = new AppDbContext(_dbContextOptions);
             _dbContext.Database.EnsureCreated();
 
-            _recipeService = new EFRecipeService(_dbContext);
             _recipeItemService = new EFRecipeItemService(_dbContext);
 
             _recipeSweetRib = new Recipe()

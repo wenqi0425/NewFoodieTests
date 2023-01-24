@@ -14,7 +14,6 @@ namespace NewFoodie.Areas.Identity.Pages.Account.Manage.Tests
         private static DbContextOptions<AppDbContext> _dbContextOptions = new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase("rececipMemoeryDb").Options;
         private AppDbContext _dbContext;
         private EFRecipeService _recipeService;
-        private EFRecipeItemService _recipeItemService;
 
         private List<Recipe> _originalAllRecipes;
 
